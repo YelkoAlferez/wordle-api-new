@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\HandleRegisterValidation;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
@@ -24,8 +25,11 @@ class UserController extends Controller
         }
     }
 
-    public function register(Request $request){
-        $user = User::create($request->except('repeatPassword'));
+    public function register(HandleRegisterValidation $request){
+        $dataInput = $request->except(['surname', 'repeatPassword']);
+        $dataInput['name'] = $request->name . ' ' . $request->surname;
+
+        $user = User::create($dataInput);
         return response()->json(["retCode" => 200, "user" => $user]);
     }
 
